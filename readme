@@ -1,0 +1,2 @@
+uvicorn main:app --host 0.0.0.0 --port 80 --env-file .env.dev --reload
+uvicorn main:app --host 0.0.0.0 --port 80 --env-file .env.prod --reload
