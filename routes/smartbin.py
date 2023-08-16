@@ -1,9 +1,14 @@
+import json
+import os
 from fastapi import Depends,  HTTPException, APIRouter
 from fastapi.security.http import HTTPBearer
 from starlette import status
 from pydantic import BaseModel
 from fastapi.responses import FileResponse
 import random
+
+from core.base_service import BaseService
+from core.custom_error import bad_request, not_found, unauthorized
 
 router = APIRouter(
     prefix='/api/v1/smartbin',
@@ -26,7 +31,7 @@ class UnauthorizedMessage(BaseModel):
 
 async def get_token(tok: str = Depends(get_bearer_token)) -> str:
     try:
-        if tok.scheme == 'Bearer' and tok.credentials == '1234':
+        if tok.scheme == 'Bearer' and tok.credentials == os.getenv('KEY_APP'):
             return tok.credentials
         else:
             raise HTTPException(
@@ -40,6 +45,9 @@ async def get_token(tok: str = Depends(get_bearer_token)) -> str:
         )
 
 
+base_service = BaseService()
+
+
 @router.get("/amount_waste")
 async def amount_waste(_: str = Depends(get_token)):
     apiSuccess = random.choice(apiSuccessList)
@@ -50,31 +58,108 @@ async def amount_waste(_: str = Depends(get_token)):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
 
 
-@router.get("/login_qrcode")
-async def login_qrcode(_: str = Depends(get_token)):
-    apiSuccess = random.choice(apiSuccessList)
+@router.get("/get_data_type")
+def get_data_type(_: str = Depends(get_token)):
+    url = '/v1/bin/secret/types'
 
-    if apiSuccess:
-        return FileResponse("assets/images/qr-code.png")
-    else:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
+    try:
+        res = base_service.get(url)
+        return json.loads(res.text)
+    except:
+        raise bad_request(http_method='POST')
+
+
+@router.put("/update_capacity_bin")
+async def update_capacity_bin(can: int, pet: int, plastic: int, unknown: int, _: str = Depends(get_token)):
+    url = '/v1/bin/secret/quantities'
+    json_data = {
+        'data': f'0:{can}/1:{pet}/2:{plastic}/3:{unknown}'}
+
+    try:
+        res = base_service.post(url, json=json_data)
+        return json.loads(res.text)
+    except:
+        raise bad_request(http_method='POST')
+
+
+@router.post("/bin_report_error")
+def bin_report_error(_: str = Depends(get_token)):
+    url = '/v1/bin/secret/status'
+
+    '''
+    code
+        - 1   ถังขยะเต็ม
+        - 3   ถังขยะเสีย
+
+    message
+        - ถังขยะเต็มเฉพาะถังที่ 1
+        - ไม่สามารถเชื่อมต่อกล้องได้
+    '''
+
+    json_data = {
+        "code": 1,
+        "message": "ถังขยะเต็มเฉพาะถังที่ 1"
+    }
+
+    try:
+        res = base_service.post(url,  json=json_data)
+        return json.loads(res.text)
+    except:
+        raise bad_request(http_method='POST')
 
 
 @router.post("/login_student_id")
-async def login_student_id(sid: str, _: str = Depends(get_token)):
-    apiSuccess = random.choice(apiSuccessList)
+async def login_student_id(student_id, _: str = Depends(get_token)):
+    url = '/v1//bin/secret/login/uname'
+    # 6340202784
+    # 6440202254
 
-    if apiSuccess:
-        return {'token': sid}
-    else:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
+    try:
+        res = base_service.post(
+            url=url,
+            headers={'Content-Type': 'application/x-www-form-urlencoded'},
+            data={'uname': f'b{student_id}'},
+        )
+
+        if res.status_code == 404:
+            raise not_found(http_method='POST')
+
+        return json.loads(res.text)
+
+        # if 'access_token' in res.text:
+        #     access_token = json.loads(res.text)['access_token']
+        #     return access_token
+    except:
+        raise bad_request(http_method='POST')
 
 
-@router.get("/donate")
-async def donate(_: str = Depends(get_token)):
-    apiSuccess = random.choice(apiSuccessList)
+@router.get("/login_qrcode")
+async def login_qrcode(_: str = Depends(get_token)):
+    url = '/v1/bin/secret/login/qrcode'
 
-    if apiSuccess:
-        return {'token': 'asdscdcscddd'}
-    else:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
+    try:
+        res = base_service.get(url)
+
+        save_path = "assets/images/login_qr_code.png"
+        fp = open(save_path, "wb")
+        fp.write(res.content)
+        fp.close()
+
+        return FileResponse(save_path)
+    except:
+        raise not_found(http_method='GET')
+
+
+@router.get("/get_qrcode_access_token")
+async def get_qrcode_access_token(_: str = Depends(get_token)):
+    url = '/v1/bin/secret/login/check'
+
+    try:
+        res = base_service.get(url)
+
+        if res.status_code == 401:
+            raise unauthorized(http_method='GET')
+
+        return json.loads(res.text)
+    except:
+        raise bad_request(http_method='GET')
