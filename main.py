@@ -1,4 +1,4 @@
-from typing import Annotated, Union
+from typing import Union
 import os
 from fastapi import FastAPI, Request, Response, Depends, Header, HTTPException
 from fastapi.security.http import HTTPBearer

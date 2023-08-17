@@ -39,6 +39,21 @@ class BaseService:
         except:
             return bad_request(http_method='POST')
 
+    def postImage(self, url: str, files, headers: dict = None) -> requests.models.Response:
+        endpoint = self.url + url
+
+        try:
+            with requests.Session() as s:
+                res = requests.post(endpoint,
+                                    files=files,
+                                    headers=self.generate_common_header_request(
+                                        headers),
+                                    verify=False,
+                                    )
+                return res
+        except:
+            return bad_request(http_method='POST')
+
     def generate_common_header_request(self, headers: dict = None) -> dict:
         default_header = {
             'X-Bin-ID': os.getenv('X_BIN_ID'),
