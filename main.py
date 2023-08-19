@@ -1,4 +1,4 @@
-from typing import Annotated, Union
+from typing import Union
 import os
 from fastapi import FastAPI, Request, Response, Depends, Header, HTTPException
 from fastapi.security.http import HTTPBearer
@@ -8,7 +8,7 @@ from modules.test.test_main import Tests
 from starlette import status
 from pydantic import BaseModel
 from fastapi.responses import FileResponse
-from routes import smartbin
+from routes import smartbin,prediction_image,check_bin
 
 app = FastAPI()
 app.add_middleware(
@@ -19,18 +19,24 @@ app.add_middleware(
 )
 
 app.include_router(smartbin.router)
+app.include_router(prediction_image.router)
+app.include_router(check_bin.router)
 
 
 @app.get("/")
 async def read_root(request: Request, response: Response):
     # print(request.query_params.get("open"))
-    if ('Bearer 1234' == request.headers['authorization']):
-        response.status_code = 200
-        return {"satus": 'good'}
-    else:
+    try:
+        
+        if ('Bearer '+os.getenv('KEY_APP') == request.headers['authorization']):
+            response.status_code = 200
+            return {"satus": 'good'}
+        else:
+            response.status_code = 404
+            return {"satus": 'token not find or type token not find'}
+    except:
         response.status_code = 404
         return {"satus": 'token not find or type token not find'}
-
 
 @app.get("/items/{item_id}")
 def read_item(item_id: int, q: Union[str, None] = None):
