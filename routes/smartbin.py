@@ -1,4 +1,3 @@
-import base64
 import json
 import os
 from fastapi import Depends,  HTTPException, APIRouter, Request
@@ -6,11 +5,12 @@ from fastapi.security.http import HTTPBearer
 from starlette import status
 from pydantic import BaseModel
 from fastapi.responses import FileResponse
-import random
 import mimetypes
 
 from core.base_service import BaseService
 from core.custom_error import bad_request, not_found, unauthorized
+from models.prediction_model import PredictionModel
+from models.user_select_type_model import UserSelectType
 
 
 save_login_qrcode_path = os.path.join(
@@ -59,7 +59,7 @@ async def amount_waste(request: Request, _: str = Depends(get_token)):
     print(request.base_url)
     print(request.headers)
     print(request.method)
-    return {'wine': 80, 'plastic': 20, 'can': 100}
+    return {'can': 80.0, 'plastic': 20.0, 'pet': 100.0, 'trash': 30.0}
 
 
 @router.get("/get_data_type")
@@ -138,7 +138,7 @@ async def login_student_id(student_id, _: str = Depends(get_token)):
 
 
 @router.get("/login_qrcode")
-async def login_qrcode(_: str = Depends(get_token)):
+async def login_qrcode():
     url = '/v1/bin/secret/login/qrcode'
 
     try:
@@ -168,17 +168,23 @@ async def get_qrcode_access_token(_: str = Depends(get_token)):
         raise bad_request(http_method='GET')
 
 
+@router.post("/user_select_type")
+def user_select_type(items: UserSelectType, _: str = Depends(get_token)):
+    print(items.type)
+    print(items.user)
+    print(items.datetime)
+    return {"message": items}
+
+
 @router.post("/prediction_login")
-def prediction_login(image_name, access_token):
+def prediction_login(items: PredictionModel, _: str = Depends(get_token)):
     url = '/prediction/'
-    headers = {'Authorization': f'Bearer {access_token}'}
+    headers = {'Authorization': f'Bearer {items.access_token}',
+               'Content-Type': None}
 
-    image_path = 'assets/images/plastic.jpg'
-    image_name = os.path.basename(image_path)
+    image_name = os.path.basename(items.image_path)
     image_type = mimetypes.guess_type(image_name)[0]
-
-    headers = {'Content-Type': None}
-    files = {'image': (image_name, open(image_path, 'rb'), image_type)}
+    files = {'image': (image_name, open(items.image_path, 'rb'), image_type)}
 
     try:
         res = base_service.postImage(
@@ -188,20 +194,24 @@ def prediction_login(image_name, access_token):
         )
         return json.loads(res.text)
     except:
-        raise bad_request(http_method='GET')
+        raise bad_request(http_method='POST')
 
 
 @router.post("/prediction_donate")
-def prediction_donate():
+def prediction_donate(items: PredictionModel, _: str = Depends(get_token)):
+    print(items.image_path)
+    print(items.access_token)
     url = '/prediction/?mode=donate'
-    image_path = 'assets/images/plastic.jpg'
-    image_name = os.path.basename(image_path)
-    image_type = mimetypes.guess_type(image_name)[0]
-
-    headers = {'Content-Type': None}
-    files = {'image': (image_name, open(image_path, 'rb'), image_type)}
+    # image_path = 'assets/images/plastic.jpg'
 
     try:
+        image_name = os.path.basename(items.image_path)
+        image_type = mimetypes.guess_type(image_name)[0]
+
+        headers = {'Content-Type': None}
+        files = {'image': (image_name, open(
+            items.image_path, 'rb'), image_type)}
+
         res = base_service.postImage(
             url,
             files=files,

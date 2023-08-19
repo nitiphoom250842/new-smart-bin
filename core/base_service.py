@@ -22,13 +22,6 @@ class BaseService:
     def post(self, url: str, data: dict = None, json: dict = None, headers: dict = None) -> requests.models.Response:
         endpoint = self.url + url
 
-        return requests.post(endpoint,
-                             headers=self.generate_common_header_request(
-                                 headers),
-                             data=data,
-                             json=json,
-                             verify=False)
-
         try:
             return requests.post(endpoint,
                                  headers=self.generate_common_header_request(
