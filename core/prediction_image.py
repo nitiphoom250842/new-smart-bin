@@ -60,7 +60,7 @@ class PredictionImage:
     
     def prediction_login(self,image_origin):
     
-        url = os.getenv('BASE_URL_API_AI')
+        url = os.getenv('BASE_URL_API_AI')+'prediction/'
         headers = {
             'X-Bin-ID': os.getenv('X_BIN_ID'),
             'X-Bin-Client': os.getenv('X_BIN_CLIENT'),
@@ -79,7 +79,7 @@ class PredictionImage:
 
     def prediction_donate(self,image_origin):
     
-        url = os.getenv('BASE_URL_API_AI')+'?mode=donate'
+        url = os.getenv('BASE_URL_API_AI')+'prediction/?mode=donate'
         headers = {
            'X-Bin-ID': os.getenv('X_BIN_ID'),
             'X-Bin-Client': os.getenv('X_BIN_CLIENT'),
