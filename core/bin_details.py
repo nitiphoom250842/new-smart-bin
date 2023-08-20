@@ -54,4 +54,4 @@ class BinDetails:
                     break
 
 
-        return data
+        return {'status':200,"data":data}
