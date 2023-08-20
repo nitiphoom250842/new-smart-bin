@@ -5,6 +5,7 @@ import cv2
 import requests
 import os
 import time
+from core.light import Light
 
 
 class PredictionImage:
@@ -20,8 +21,10 @@ class PredictionImage:
         return imgname
     
     def cap_image(self):
+        set_ligth = Light(status_light=True)
+        set_ligth.setLight()
+        time.sleep(5)
         imgname = self.create_name()
-        
         cap = cv2.VideoCapture(0)
         cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
         cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)

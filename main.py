@@ -8,7 +8,7 @@ from modules.test.test_main import Tests
 from starlette import status
 from pydantic import BaseModel
 from fastapi.responses import FileResponse
-from routes import smartbin,prediction_image,check_bin
+from routes import smartbin,prediction_image,check_bin,set_light
 
 app = FastAPI()
 app.add_middleware(
@@ -21,6 +21,7 @@ app.add_middleware(
 app.include_router(smartbin.router)
 app.include_router(prediction_image.router)
 app.include_router(check_bin.router)
+app.include_router(set_light.router)
 
 
 @app.get("/")
