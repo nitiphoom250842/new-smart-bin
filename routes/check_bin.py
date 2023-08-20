@@ -43,8 +43,19 @@ async def get_token(request: Request,tok: str = Depends(get_bearer_token)) -> st
 
 @router.get("/{type_test}")
 async def get_details_bin(type_test: str,token: str = Depends(get_token)):
-    return {
-        'wine': 80,
-        'plastic': 20,
-        'can': 100,
-    }
+    status_for_test = True
+    data = None
+    try:
+        
+        if(type_test=='yes'):
+            status_for_test = True
+        elif(type_test=='no'):
+            status_for_test = False
+
+        setup_bin =BinDetails(status_test=status_for_test)
+        data = setup_bin.checkBinDetails()
+    except Exception as e:
+        # print(e)
+        data = {"status":500,"message":'error can not check details bin, check file core/bin_details.py'}
+
+    return data
