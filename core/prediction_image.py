@@ -6,10 +6,11 @@ import requests
 import os
 import time
 from .motor_position import MotorPosition
+from .servo_door import Door
 
 
 class PredictionImage:
-    def __init__(self,accessToken:str,type_point:str,status_test:str):
+    def __init__(self,accessToken:str,type_point:str,status_test:bool):
         self.accessToken = accessToken
         self.type_point = type_point
         self.status_test = status_test
@@ -71,7 +72,6 @@ class PredictionImage:
         image_type = guess_type(image_origin)[0]
         files = {'image': (image_origin, open(image_origin, 'rb'), image_type)}
         try:
-            print(url)
             res = requests.request('POST', url, files=files, headers=headers, verify=False)
         except:
             return 404
@@ -97,8 +97,15 @@ class PredictionImage:
         return res
         
     def predictions(self):
-        # print("PredictionImage ",self.accessToken,self.type_point)
-        status_for_test = True
+        # print("PredictionImage ",self.accessToken,self.type_point,self.status_test)
+       
+        if(self.status_test):
+            pass
+        else:
+            set_servo_door =Door()
+            set_servo_door.setDoor()
+            
+            
         image_grey, image_origin, image_name = self.cap_image()
         if self.type_point == 'donate':
             data = self.prediction_donate(image_origin)
@@ -106,8 +113,8 @@ class PredictionImage:
         elif self.type_point == 'undonate':
             data = self.prediction_login(image_origin)
             # print(data.json())
-        
-        setup_motor =MotorPosition(class_name_prediction=data.json(),status_test=status_for_test)
+
+        setup_motor =MotorPosition(class_name_prediction=data.json(),status_test=self.status_test)
         setup_motor.setMoter()
 
         return {'status':200,"data":data.json()}

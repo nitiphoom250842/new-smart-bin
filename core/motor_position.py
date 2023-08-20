@@ -6,6 +6,11 @@ class MotorPosition:
         
         
     def setMoter(self):
-        print("MotorPosition ",self.class_name_prediction,self.status_test)
+        data = {'status':200,'message':None}
+        # print("MotorPosition ",self.class_name_prediction,self.status_test)
+        if(self.status_test):
+            data['status']='bin done'
+        else:
+            pass
 
-        return 
+        return data

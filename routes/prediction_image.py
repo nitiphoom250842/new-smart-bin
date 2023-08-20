@@ -53,13 +53,14 @@ async def prediction(type_point: str,type_test: str,token: str = Depends(get_tok
         
         if(type_test=='yes'):
             status_for_test = True
+
         elif(type_test=='no'):
             status_for_test = False
 
         setup = PredictionImage(accessToken=token,type_point=type_point,status_test=status_for_test)
         data = setup.predictions()
     except Exception as e:
-        # print(e)
+        print(e)
         data = {"status":500,"message":'error can not prediction, check file core/prediction_image.py'}
 
     return data

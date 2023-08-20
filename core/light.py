@@ -1,7 +1,5 @@
 # core\light.py
 
-import time
-
 class Light:
     def __init__(self, status_light:bool,status_test:bool):
         self.status_light = status_light
