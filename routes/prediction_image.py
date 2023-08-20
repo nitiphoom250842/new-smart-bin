@@ -42,14 +42,22 @@ async def get_token(request: Request,tok: str = Depends(get_bearer_token)) -> st
         )
 
 
-@router.get("/{type_point}")
-async def prediction(type_point: str,token: str = Depends(get_token)):
+@router.get("/{type_test}/{type_point}")
+async def prediction(type_point: str,type_test: str,token: str = Depends(get_token)):
     # print(type_prediction)
     # print(token)
-    data = PredictionImage(AccessToken=token,type_point=type_point)
-    data.predictions()
-    return {
-        'wine': 80,
-        'plastic': 20,
-        'can': 100,
-    }
+    
+    status_for_test = True
+    data = None
+    try:
+        if(type_test=='yes'):
+            status_for_test = True
+        elif(type_test=='no'):
+            status_for_test = False
+
+        setup = PredictionImage(AccessToken=token,type_point=type_point,status_test=status_for_test)
+        data = setup.predictions()
+    except:
+        data = {"status":500,"message":'error can not prediction, check file core/prediction_image.py'}
+
+    return data

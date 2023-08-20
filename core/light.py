@@ -28,3 +28,5 @@ class Light:
                     data['message']='open light close'
 
         return data
+    
+    

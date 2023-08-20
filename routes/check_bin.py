@@ -3,6 +3,7 @@ from fastapi.security.http import HTTPBearer
 from starlette import status
 from pydantic import BaseModel
 import os
+from core.bin_details import BinDetails
 
 
 
@@ -40,8 +41,8 @@ async def get_token(request: Request,tok: str = Depends(get_bearer_token)) -> st
         )
 
 
-@router.get("")
-async def get_details_bin(token: str = Depends(get_token)):
+@router.get("/{type_test}")
+async def get_details_bin(type_test: str,token: str = Depends(get_token)):
     return {
         'wine': 80,
         'plastic': 20,
