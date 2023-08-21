@@ -1,4 +1,5 @@
 import time
+from .ultrasonic import Ultrasonic
 
 class Door:
 
@@ -45,15 +46,15 @@ class Door:
         p.stop()
         GPIO.output(servoPOW, False)
     
-
-    def detect_hand(self):
-        self.close()
-        pass
-
-
     def setDoor(self):
         self.open()
-        self.detect_hand()
-        
+        process_detect_trash = Ultrasonic()
+        data_detact = process_detect_trash.isHaveObject()
+        self.close()
+
+        if data_detact == 1:
+            return True
+        else:
+            return False
         
         

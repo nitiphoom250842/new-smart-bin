@@ -98,26 +98,40 @@ class PredictionImage:
         
     def predictions(self):
         # print("PredictionImage ",self.accessToken,self.type_point,self.status_test)
-       
+        # image_grey, image_origin, image_name = None
+        data_bin_details ={'can':10,'pet':50,'plastic':40,'unknown':90}
+        data =None
         if(self.status_test):
-            pass
+            image_grey, image_origin, image_name = self.cap_image()
+            if self.type_point == 'donate':
+                data = self.prediction_donate(image_origin)
+                # print(data.json())
+            elif self.type_point == 'undonate':
+                data = self.prediction_login(image_origin)
+                # print(data.json())
+            os.remove(image_origin)
+            os.remove(image_grey)
+
         else:
+            
             set_servo_door =Door()
-            set_servo_door.setDoor()
-            
-            
-        image_grey, image_origin, image_name = self.cap_image()
-        if self.type_point == 'donate':
-            data = self.prediction_donate(image_origin)
-            # print(data.json())
-        elif self.type_point == 'undonate':
-            data = self.prediction_login(image_origin)
-            # print(data.json())
+            data_door = set_servo_door.setDoor()
+            if(data_door):
+                image_grey, image_origin, image_name = self.cap_image()
+                if self.type_point == 'donate':
+                    data = self.prediction_donate(image_origin)
+                    # print(data.json())
+                elif self.type_point == 'undonate':
+                    data = self.prediction_login(image_origin)
+                    # print(data.json())
+                if(data is not None):
+                    setup_motor =MotorPosition(class_name_prediction=data.json())
+                    setup_motor.setMoter()
 
-        setup_motor =MotorPosition(class_name_prediction=data.json(),status_test=self.status_test)
-        setup_motor.setMoter()
+                os.remove(image_origin)
+                os.remove(image_grey)
 
-        return {'status':200,"data":data.json()}
+        return {'status':200,"data":data.json(),'bin_details':data_bin_details}
 
     
     
