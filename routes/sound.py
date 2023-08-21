@@ -3,7 +3,6 @@
 import os
 from threading import Thread
 from fastapi import APIRouter, HTTPException
-from starlette import status
 import pygame
 
 from core.custom_error import generate_common_header_response
@@ -19,25 +18,27 @@ router = APIRouter(
     }
 )
 
+pygame.mixer.init()
+
 
 sound_data = {
     'main.start': '1-เริ่มใช้งาน.wav',
     'main.exchange': '2-แลกขยะ.wav',
     'main.howto': '3-วิธีใช้.wav',
-    'all.back': '4-ย้อนกลับ.wav',
     'list.collect': '5-สะสมแต้ม.wav',
     'list.donate': '6-บริจาค.wav',
     'login.qrcode': '7-scan-QR-Code.wav',
     'login.sid': '8-ป้อนรหัสนิสิต.wav',
     'login.delete': '9-ลบ.wav',
     'all.enter': '10-ตกลง.wav',
-    'all.back': '11-แลกเพิ่ม.wav',
-    'all.back': '12-ดูคะแนน.wav',
-    'all.back': '13-พร้อมทำงาน.wav',
-    'all.back': '14-กำลังประมวลผล.wav',
-    'all.back': '15-คะแนนสะสมครั้งนี้.wav',
-    'all.back': '16-ยืนยัน.wav',
-    'all.back': '17-ขอบคุณค่ะ.wav',
+    'all.increase': '11-แลกเพิ่ม.wav',
+    'all.lookscore': '12-ดูคะแนน.wav',
+    'all.ready': '13-พร้อมทำงาน.wav',
+    'all.process': '14-กำลังประมวลผล.wav',
+    'all.total': '15-คะแนนสะสมครั้งนี้.wav',
+    'all.confirm': '16-ยืนยัน.wav',
+    'all.thanks': '17-ขอบคุณค่ะ.wav',
+    'all.back': '4-ย้อนกลับ.wav',
 }
 
 
@@ -48,13 +49,12 @@ async def play(command: str):
         play_sound(join_path(sound_path))
 
         return HTTPException(
-            status_code=status.HTTP_200_OK,
-            headers=generate_common_header_response('GET'),
+            status_code=200,
         )
     except:
-        return HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            headers=generate_common_header_response('GET'),
+        raise HTTPException(
+            status_code=404,
+            detail="Item not found",
         )
 
 
