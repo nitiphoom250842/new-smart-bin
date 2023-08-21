@@ -8,7 +8,7 @@ from modules.test.test_main import Tests
 from starlette import status
 from pydantic import BaseModel
 from fastapi.responses import FileResponse
-from routes import smartbin,prediction_image,check_bin,set_light
+from routes import smartbin, prediction_image, check_bin, set_light, sound
 
 app = FastAPI()
 app.add_middleware(
@@ -22,13 +22,14 @@ app.include_router(smartbin.router)
 app.include_router(prediction_image.router)
 app.include_router(check_bin.router)
 app.include_router(set_light.router)
+app.include_router(sound.router)
 
 
 @app.get("/")
 async def read_root(request: Request, response: Response):
     # print(request.query_params.get("open"))
     try:
-        
+
         if ('Bearer '+os.getenv('KEY_APP') == request.headers['authorization']):
             response.status_code = 200
             return {"satus": 'good'}
@@ -38,6 +39,7 @@ async def read_root(request: Request, response: Response):
     except:
         response.status_code = 404
         return {"satus": 'token not find or type token not find'}
+
 
 @app.get("/items/{item_id}")
 def read_item(item_id: int, q: Union[str, None] = None):

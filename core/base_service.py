@@ -6,7 +6,7 @@ from core.custom_error import bad_request, not_found
 
 class BaseService:
     def __init__(self) -> None:
-        self.url = os.getenv('BASE_BIN_DOMAIN')
+        self.url = os.getenv('BASE_URL_API_AI')
 
     def get(self, url: str, headers: dict = None) -> requests.models.Response:
         endpoint = self.url + url
