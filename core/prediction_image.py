@@ -116,6 +116,7 @@ class PredictionImage:
             
             set_servo_door =Door()
             data_door = set_servo_door.setDoor()
+
             if(data_door):
                 image_grey, image_origin, image_name = self.cap_image()
                 if self.type_point == 'donate':
@@ -126,7 +127,7 @@ class PredictionImage:
                     # print(data.json())
                 if(data is not None):
                     setup_motor =MotorPosition(class_name_prediction=data.json())
-                    setup_motor.setMoter()
+                    data_bin_details = setup_motor.setMoter()
 
                 os.remove(image_origin)
                 os.remove(image_grey)

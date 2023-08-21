@@ -33,7 +33,7 @@ class BinDetails:
             time.sleep(2)
 
             # send = str(input("type : ")) + '\n'
-            send = f"{id}\n"
+            send = f"{-1}\n"
 
             ser.write(send.encode())
 
