@@ -14,7 +14,7 @@ while True:
 
     if not ret:
         print("Can't receive frame (stream end?). Exiting ...")
-        break
+        continue
 
     gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
     cv.imshow('frame', gray)

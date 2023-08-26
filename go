@@ -35,7 +35,7 @@ task_camera(){
     local index=$1
   fi
 
-  python tests/check_camera.py $index
+  python tests/camera.py $index
 }
 
 help__prediction="test prediction endpoint"
