@@ -45,9 +45,6 @@ class Door:
             data_detact = process_detect_trash.isHaveObject()
             self.close()
 
-            if data_detact == 1:
-                return True
-            else:
-                return False
+            return data_detact
         except:
             raise DoorError()

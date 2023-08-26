@@ -3,7 +3,7 @@ import time
 
 if os.getenv("ENV") == "prod":
     import RPi.GPIO as GPIO
-    
+
     GPIO.setwarnings(False)
     GPIO.setmode(GPIO.BCM)
 
@@ -81,7 +81,7 @@ class Ultrasonic:
             if hand > 15:
                 if dist < 23:
                     time.sleep(1)
-                    return 1
+                    return True
 
                 if (time.time() - start_time) > 10:
-                    return 0
+                    return False

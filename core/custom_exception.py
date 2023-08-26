@@ -2,6 +2,10 @@ class DoorError(Exception):
     pass
 
 
+class DoorTimeout(Exception):
+    pass
+
+
 class CameraError(Exception):
     pass
 

@@ -7,7 +7,7 @@ import requests
 import os
 import time
 
-from core.custom_exception import APIPredictionError, CameraError, DoorError, MotorError, RemoveImageError
+from core.custom_exception import APIPredictionError, CameraError, DoorError, DoorTimeout, MotorError, RemoveImageError
 from .motor_position import MotorPosition
 from .servo_door import Door
 
@@ -163,6 +163,8 @@ class PredictionImage:
                         "data": data.json(),
                         "bin_details": data_bin_details,
                     }
+                else:
+                    raise DoorTimeout()
 
             except DoorError:
                 raise DoorError()

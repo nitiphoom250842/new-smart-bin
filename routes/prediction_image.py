@@ -4,7 +4,7 @@ from fastapi.security.http import HTTPBearer
 from starlette import status
 from pydantic import BaseModel
 import os
-from core.custom_exception import APIPredictionError, CameraError, DoorError, MotorError, RemoveImageError
+from core.custom_exception import APIPredictionError, CameraError, DoorError, DoorTimeout, MotorError, RemoveImageError
 from core.prediction_image import PredictionImage
 from models.access_token_model import AccessTokenModel
 
@@ -65,6 +65,9 @@ async def prediction(
         )
 
         return setup.predictions()
+    
+    except DoorTimeout:
+        raise HTTPException(status_code=404, detail="door timeout")
 
     except DoorError:
         raise HTTPException(status_code=503, detail="door error")
