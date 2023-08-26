@@ -16,6 +16,12 @@ task_push(){
   git push
 }
 
+help__pull="reset & pull"
+task_pull(){
+  git reset --hard
+  git pull
+}
+
 ## main
 list_all_helps() {
   compgen -v | egrep "^help__.*"
