@@ -27,6 +27,29 @@ task_run(){
   uvicorn main:app --host 0.0.0.0 --port 8080 --env-file .env.prod --reload
 }
 
+help__camera="test camera"
+task_camera(){
+  if [ -z "$1" ]; then
+    local index=0
+  else
+    local index=$1
+  fi
+
+  python tests/check_camera.py $index
+}
+
+help__prediction="test prediction endpoint"
+task_prediction(){
+  curl -X 'POST' \
+  'http://localhost:8080/api/v1/smartbin/prediction/no/donate' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer 1234' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "access_token": "1234"
+}'
+}
+
 
 ## main
 list_all_helps() {
