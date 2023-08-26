@@ -114,8 +114,10 @@ class PredictionImage:
     
     def removeImage(self, path: list):
         for p in path:
-            try:  os.remove(p)
-            except: raise RemoveImageError()
+            try: 
+                os.remove(p)
+            except: 
+                raise RemoveImageError()
 
 
     def predictions(self):

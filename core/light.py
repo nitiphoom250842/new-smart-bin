@@ -5,7 +5,8 @@ import os
 
 if os.getenv("ENV") == "prod":
     import RPi.GPIO as GPIO
-
+    
+    GPIO.setwarnings(False)
     GPIO.setmode(GPIO.BCM)
 
 

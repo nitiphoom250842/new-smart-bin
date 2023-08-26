@@ -3,6 +3,9 @@ import time
 
 if os.getenv("ENV") == "prod":
     import RPi.GPIO as GPIO
+    
+    GPIO.setwarnings(False)
+    GPIO.setmode(GPIO.BCM)
 
 
 class Ultrasonic:
@@ -10,7 +13,6 @@ class Ultrasonic:
         pass
 
     def detect_hand(self):
-        GPIO.setmode(GPIO.BCM)
         GPIO_TRIGGER = 20
         GPIO_ECHO = 21
         GPIO.setup(GPIO_TRIGGER, GPIO.OUT)
@@ -40,7 +42,6 @@ class Ultrasonic:
         return abs(distance)
 
     def detect_trash(self):
-        GPIO.setmode(GPIO.BCM)
         GPIO_TRIGGER = 27
         GPIO_ECHO = 22
         GPIO.setup(GPIO_TRIGGER, GPIO.OUT)
