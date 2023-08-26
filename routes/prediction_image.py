@@ -4,7 +4,7 @@ from fastapi.security.http import HTTPBearer
 from starlette import status
 from pydantic import BaseModel
 import os
-from core.custom_exception import APIPredictionError, CameraError, DoorError, MotorError
+from core.custom_exception import APIPredictionError, CameraError, DoorError, MotorError, RemoveImageError
 from core.prediction_image import PredictionImage
 from models.access_token_model import AccessTokenModel
 
@@ -65,8 +65,7 @@ async def prediction(
             status_test=status_for_test,
         )
 
-        data = setup.predictions()
-        return data
+        return setup.predictions()
 
     except DoorError:
         raise HTTPException(status_code=503, detail="door error")
@@ -80,6 +79,9 @@ async def prediction(
     except MotorError:
         raise HTTPException(status_code=503, detail="motor error")
 
+    except RemoveImageError:
+        raise HTTPException(status_code=503, detail="remove image error")
+    
     except Exception as e:
         print(e)
         raise HTTPException(

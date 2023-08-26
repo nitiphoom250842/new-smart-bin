@@ -4,8 +4,17 @@ from core.custom_exception import DoorError
 from .ultrasonic import Ultrasonic
 import os
 
+servoPOW = 6
+servoPIN = 26
+lightPIN = 13
+
 if os.getenv("ENV") == "prod":
     import RPi.GPIO as GPIO
+
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(servoPIN, GPIO.OUT)
+    GPIO.setup(servoPOW, GPIO.OUT)
+    GPIO.setup(lightPIN, GPIO.OUT)
 
 
 class Door:
@@ -13,32 +22,14 @@ class Door:
         pass
 
     def open(self):
-        servoPOW = 6
-        servoPIN = 26
-        lightPIN = 13
-
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(servoPIN, GPIO.OUT)
-        GPIO.setup(servoPOW, GPIO.OUT)
-        GPIO.setup(lightPIN, GPIO.OUT)
-
         GPIO.output(servoPOW, True)
         p = GPIO.PWM(servoPIN, 50)
         p.start(6.9)
         p.ChangeDutyCycle(3.5)
         time.sleep(1)
-        p.stop(self)
+        p.stop()
 
-    def close():
-        servoPOW = 6
-        servoPIN = 26
-        lightPIN = 13
-
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(servoPIN, GPIO.OUT)
-        GPIO.setup(servoPOW, GPIO.OUT)
-        GPIO.setup(lightPIN, GPIO.OUT)
-
+    def close(self):
         p = GPIO.PWM(servoPIN, 50)
         p.start(3.5)
         p.ChangeDutyCycle(6.9)

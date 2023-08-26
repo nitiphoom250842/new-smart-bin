@@ -12,3 +12,7 @@ class APIPredictionError(Exception):
 
 class MotorError(Exception):
     pass
+
+
+class RemoveImageError(Exception):
+    pass

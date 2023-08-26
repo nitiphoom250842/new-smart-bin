@@ -7,7 +7,7 @@ import requests
 import os
 import time
 
-from core.custom_exception import APIPredictionError, CameraError, DoorError, MotorError
+from core.custom_exception import APIPredictionError, CameraError, DoorError, MotorError, RemoveImageError
 from .motor_position import MotorPosition
 from .servo_door import Door
 
@@ -20,13 +20,13 @@ class PredictionImage:
 
     def create_name(self):
         seconds = time.time()
-        imgname = str(seconds).split(".")[0] + ".jpg"
+        img_name = str(seconds).split(".")[0] + ".jpg"
 
-        return imgname
+        return img_name
 
     def cap_image(self):
         try:
-            imgname = self.create_name()
+            img_name = self.create_name()
             cap = cv2.VideoCapture(0)
             cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
             cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
@@ -41,26 +41,26 @@ class PredictionImage:
             # ret, frame = cap.read()
 
             if ret:
-                image_origin = "image/" + "origin-" + imgname.split(".")[0] + ".jpg"
+                image_origin = "assets/image/" + "origin-" + img_name.split(".")[0] + ".jpg"
                 cv2.imwrite(image_origin, frame)
 
                 gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-                image_grey = "image/" + "grey-" + imgname
+                image_grey = "assets/image/" + "grey-" + img_name
                 cv2.imwrite(image_grey, gray)
             else:
                 image_grey = -1
                 image_origin = -1
             """
             
-            image_origin = 'image/' + 'origin-' + imgname.split('.')[0] + '.jpg'
-            image_grey = 'image/' + 'grey-' + imgname
+            image_origin = 'assets/image/' + 'origin-' + img_name.split('.')[0] + '.jpg'
+            image_grey = 'assets/image/' + 'grey-' + img_name
             os.system('sudo fswebcam -S 20 --no-banner -d /dev/video1 -r 1280x720 ' + image_origin)
             os.system('sudo fswebcam -S 20 --no-banner -d /dev/video1 -r 1280x720 ' + image_grey)
             """
             cap.release()
             cv2.destroyAllWindows()
 
-            return image_grey, image_origin, imgname
+            return image_grey, image_origin, img_name
         except:
             raise CameraError()
 
@@ -141,8 +141,11 @@ class PredictionImage:
                         setup_motor = MotorPosition(class_name_prediction=data.json())
                         data_bin_details = setup_motor.setMoter()
 
-                    os.remove(image_origin)
-                    os.remove(image_grey)
+                    try:
+                        os.remove(image_origin)
+                        os.remove(image_grey)
+                    except:
+                        raise RemoveImageError()
 
                     return {
                         "status": 200,
@@ -161,3 +164,10 @@ class PredictionImage:
 
             except MotorError:
                 raise MotorError()
+            
+            except RemoveImageError:
+                raise RemoveImageError()
+            
+            except Exception:
+                raise Exception()
+            
