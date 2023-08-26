@@ -23,7 +23,7 @@ task_pull(){
 }
 
 help__run="run for test prod"
-task_test(){
+task_run(){
   uvicorn main:app --host 0.0.0.0 --port 8080 --env-file .env.prod --reload
 }
 
