@@ -38,8 +38,6 @@ class PredictionImage:
                 ret, frame = cap.read()
                 cnt += 1
 
-            # ret, frame = cap.read()
-
             if ret:
                 image_origin = os.path.join('assets', 'image', f'origin-{img_name.split(".")[0]}.jpg') 
                 cv2.imwrite(image_origin, frame)
@@ -50,6 +48,7 @@ class PredictionImage:
             else:
                 image_grey = -1
                 image_origin = -1
+                raise CameraError()
             """
             
             image_origin = 'assets/image/' + 'origin-' + img_name.split('.')[0] + '.jpg'
