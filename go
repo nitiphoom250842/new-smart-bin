@@ -22,6 +22,12 @@ task_pull(){
   git pull
 }
 
+help__run="run for test prod"
+task_test(){
+  uvicorn main:app --host 0.0.0.0 --port 8080 --env-file .env.prod --reload
+}
+
+
 ## main
 list_all_helps() {
   compgen -v | egrep "^help__.*"
