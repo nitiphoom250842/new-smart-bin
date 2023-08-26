@@ -4,6 +4,7 @@ from fastapi.security.http import HTTPBearer
 from starlette import status
 from pydantic import BaseModel
 import os
+from core.custom_exception import APIPredictionError, CameraError, DoorError, MotorError
 from core.prediction_image import PredictionImage
 from models.access_token_model import AccessTokenModel
 
@@ -46,11 +47,8 @@ async def prediction(
     items: AccessTokenModel,
     type_point: str,
     type_test: str,
-    token: str = Depends(get_token),
+    _: str = Depends(get_token),
 ):
-    # print(type_prediction)
-    # print(token)
-
     status_for_test = True
     data = None
 
@@ -66,13 +64,25 @@ async def prediction(
             type_point=type_point,
             status_test=status_for_test,
         )
+
         data = setup.predictions()
+        return data
+
+    except DoorError:
+        raise HTTPException(status_code=503, detail="door error")
+
+    except CameraError:
+        raise HTTPException(status_code=503, detail="camera error")
+
+    except APIPredictionError:
+        raise HTTPException(status_code=503, detail="api prediction error")
+
+    except MotorError:
+        raise HTTPException(status_code=503, detail="motor error")
+
     except Exception as e:
         print(e)
-        data = {
-            "status": 500,
-            "message": "error can not prediction, check file core/prediction_image.py",
-        }
-        raise HTTPException(status_code=500)
-
-    return data
+        raise HTTPException(
+            status_code=500,
+            detail="error can not prediction, check file core/prediction_image.py",
+        )

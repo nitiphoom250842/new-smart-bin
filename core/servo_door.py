@@ -1,4 +1,6 @@
 import time
+
+from core.custom_exception import DoorError
 from .ultrasonic import Ultrasonic
 import os
 
@@ -45,12 +47,15 @@ class Door:
         GPIO.output(servoPOW, False)
 
     def setDoor(self):
-        self.open()
-        process_detect_trash = Ultrasonic()
-        data_detact = process_detect_trash.isHaveObject()
-        self.close()
+        try:
+            self.open()
+            process_detect_trash = Ultrasonic()
+            data_detact = process_detect_trash.isHaveObject()
+            self.close()
 
-        if data_detact == 1:
-            return True
-        else:
-            return False
+            if data_detact == 1:
+                return True
+            else:
+                return False
+        except:
+            raise DoorError()
