@@ -50,6 +50,20 @@ task_prediction(){
 }'
 }
 
+help__light="light on off"
+task_light(){
+  if [ -z "$1" ]; then
+    local status="off"
+  else
+    local status=$1
+  fi
+
+  curl -X 'GET' \
+  "http://localhost:8080/api/v1/smartbin/set-ligth/no/$status" \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer 1234'
+}
+
 
 ## main
 list_all_helps() {
