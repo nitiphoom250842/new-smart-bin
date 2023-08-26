@@ -40,6 +40,11 @@ task_camera(){
 
 help__prediction="test prediction endpoint"
 task_prediction(){
+  curl -X 'GET' \
+  'http://localhost:8080/api/v1/smartbin/set-ligth/no/on' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer 1234'
+
   curl -X 'POST' \
   'http://localhost:8080/api/v1/smartbin/prediction/no/donate' \
   -H 'accept: application/json' \
@@ -48,6 +53,11 @@ task_prediction(){
   -d '{
   "access_token": "1234"
 }'
+
+  curl -X 'GET' \
+  'http://localhost:8080/api/v1/smartbin/set-ligth/no/off' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer 1234'
 }
 
 help__light="light on off"
