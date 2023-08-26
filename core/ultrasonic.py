@@ -25,6 +25,7 @@ class Ultrasonic:
         StopTime = time.time()
 
         begin_time = time.time()
+        
         while GPIO.input(GPIO_ECHO) == 0:
             StartTime = time.time()
             if time.time() - begin_time > 1:
