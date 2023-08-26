@@ -133,9 +133,11 @@ class PredictionImage:
             try:
                 set_servo_door = Door()
                 data_door = set_servo_door.setDoor()
+                print('data_door')
 
                 if data_door:
                     image_grey, image_origin, _ = self.cap_image()
+                    print('cap_image')
 
                     if self.type_point == "donate":
                         data = self.prediction_donate(image_origin)
@@ -144,20 +146,23 @@ class PredictionImage:
                     elif self.type_point == "undonate":
                         data = self.prediction_login(image_origin)
                         # print(data.json())
+                    print(data.json())
+                    print('prediction')
 
                     if data is not None:
                         setup_motor = MotorPosition(
                             class_name_prediction=data.json())
                         data_bin_details = setup_motor.setMoter()
+                        print('data_bin_details')
 
                     self.removeImage([image_origin, image_grey])
+                    print('removeImage')
 
-                    data = {
+                    return {
+                        "status": 200,
                         "data": data.json(),
                         "bin_details": data_bin_details,
                     }
-
-                    return HTTPException(status_code=200, detail=data)
 
             except DoorError:
                 raise DoorError()
