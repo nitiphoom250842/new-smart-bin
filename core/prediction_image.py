@@ -41,12 +41,11 @@ class PredictionImage:
             # ret, frame = cap.read()
 
             if ret:
-                image_origin = "assets/image/" + "origin-" + \
-                    img_name.split(".")[0] + ".jpg"
+                image_origin = os.path.join('assets', 'image', f'origin-{img_name.split(".")[0]}.jpg') 
                 cv2.imwrite(image_origin, frame)
 
                 gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-                image_grey = "assets/image/" + "grey-" + img_name
+                image_grey = os.path.join('assets', 'image', f'grey-{img_name}')
                 cv2.imwrite(image_grey, gray)
             else:
                 image_grey = -1
