@@ -41,7 +41,8 @@ class PredictionImage:
             # ret, frame = cap.read()
 
             if ret:
-                image_origin = "assets/image/" + "origin-" + img_name.split(".")[0] + ".jpg"
+                image_origin = "assets/image/" + "origin-" + \
+                    img_name.split(".")[0] + ".jpg"
                 cv2.imwrite(image_origin, frame)
 
                 gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -111,14 +112,13 @@ class PredictionImage:
             # print(data.json())
 
         return data
-    
+
     def removeImage(self, path: list):
         for p in path:
-            try: 
+            try:
                 os.remove(p)
-            except: 
+            except:
                 raise RemoveImageError()
-
 
     def predictions(self):
         # print("PredictionImage ",self.accessToken,self.type_point,self.status_test)
@@ -146,16 +146,18 @@ class PredictionImage:
                         # print(data.json())
 
                     if data is not None:
-                        setup_motor = MotorPosition(class_name_prediction=data.json())
+                        setup_motor = MotorPosition(
+                            class_name_prediction=data.json())
                         data_bin_details = setup_motor.setMoter()
 
                     self.removeImage([image_origin, image_grey])
 
-                    return {
-                        "status": 200,
+                    data = {
                         "data": data.json(),
                         "bin_details": data_bin_details,
                     }
+
+                    return HTTPException(status_code=200, detail=data)
 
             except DoorError:
                 raise DoorError()
@@ -168,7 +170,6 @@ class PredictionImage:
 
             except MotorError:
                 raise MotorError()
-            
+
             except RemoveImageError:
                 raise RemoveImageError()
-            
