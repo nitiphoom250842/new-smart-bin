@@ -17,7 +17,7 @@ class PredictionImage:
 
     def create_name(self):
         seconds = time.time()
-        imgname = str(seconds).split('.')[0] + '.jpg'
+        imgname = str(seconds).split(".")[0] + ".jpg"
 
         return imgname
 
@@ -37,23 +37,22 @@ class PredictionImage:
         # ret, frame = cap.read()
 
         if ret:
-            image_origin = 'image/' + 'origin-' + \
-                imgname.split('.')[0] + '.jpg'
+            image_origin = "image/" + "origin-" + imgname.split(".")[0] + ".jpg"
             cv2.imwrite(image_origin, frame)
 
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            image_grey = 'image/' + 'grey-' + imgname
+            image_grey = "image/" + "grey-" + imgname
             cv2.imwrite(image_grey, gray)
         else:
             image_grey = -1
             image_origin = -1
-        '''
+        """
         
         image_origin = 'image/' + 'origin-' + imgname.split('.')[0] + '.jpg'
         image_grey = 'image/' + 'grey-' + imgname
         os.system('sudo fswebcam -S 20 --no-banner -d /dev/video1 -r 1280x720 ' + image_origin)
         os.system('sudo fswebcam -S 20 --no-banner -d /dev/video1 -r 1280x720 ' + image_grey)
-        '''
+        """
         cap.release()
         cv2.destroyAllWindows()
 
@@ -61,18 +60,19 @@ class PredictionImage:
 
     def prediction_login(self, image_origin):
 
-        url = os.getenv('BASE_URL_API_AI')+'prediction/'
+        url = os.getenv("BASE_URL_API_AI") + "prediction/"
         headers = {
-            'X-Bin-ID': os.getenv('X_BIN_ID'),
-            'X-Bin-Client': os.getenv('X_BIN_CLIENT'),
-            'Authorization': f'Bearer {self.accessToken}'
+            "X-Bin-ID": os.getenv("X_BIN_ID"),
+            "X-Bin-Client": os.getenv("X_BIN_CLIENT"),
+            "Authorization": f"Bearer {self.accessToken}",
         }
 
         image_type = guess_type(image_origin)[0]
-        files = {'image': (image_origin, open(image_origin, 'rb'), image_type)}
+        files = {"image": (image_origin, open(image_origin, "rb"), image_type)}
         try:
             res = requests.request(
-                'POST', url, files=files, headers=headers, verify=False)
+                "POST", url, files=files, headers=headers, verify=False
+            )
         except:
             return 404
 
@@ -80,18 +80,19 @@ class PredictionImage:
 
     def prediction_donate(self, image_origin):
 
-        url = os.getenv('BASE_URL_API_AI')+'prediction/?mode=donate'
+        url = os.getenv("BASE_URL_API_AI") + "prediction/?mode=donate"
         headers = {
-            'X-Bin-ID': os.getenv('X_BIN_ID'),
-            'X-Bin-Client': os.getenv('X_BIN_CLIENT'),
+            "X-Bin-ID": os.getenv("X_BIN_ID"),
+            "X-Bin-Client": os.getenv("X_BIN_CLIENT"),
         }
 
         image_type = guess_type(image_origin)[0]
-        files = {'image': (image_origin, open(image_origin, 'rb'), image_type)}
+        files = {"image": (image_origin, open(image_origin, "rb"), image_type)}
 
         try:
             res = requests.request(
-                'POST', url, files=files, headers=headers, verify=False)
+                "POST", url, files=files, headers=headers, verify=False
+            )
         except:
             return 404
 
@@ -100,16 +101,16 @@ class PredictionImage:
     def predictions(self):
         # print("PredictionImage ",self.accessToken,self.type_point,self.status_test)
         # image_grey, image_origin, image_name = None
-        data_bin_details = {'can': 10, 'pet': 50, 'plastic': 40, 'unknown': 90}
+        data_bin_details = {"can": 10, "pet": 50, "plastic": 40, "unknown": 90}
         data = None
 
         if self.status_test:
-            image_origin = os.path.join('assets', 'images', 'plastic.jpg')
+            image_origin = os.path.join("assets", "images", "plastic.jpg")
 
-            if self.type_point == 'donate':
+            if self.type_point == "donate":
                 data = self.prediction_donate(image_origin)
                 # print(data.json())
-            elif self.type_point == 'undonate':
+            elif self.type_point == "undonate":
                 data = self.prediction_login(image_origin)
                 # print(data.json())
         else:
@@ -117,20 +118,19 @@ class PredictionImage:
             set_servo_door = Door()
             data_door = set_servo_door.setDoor()
 
-            if (data_door):
+            if data_door:
                 image_grey, image_origin, image_name = self.cap_image()
-                if self.type_point == 'donate':
+                if self.type_point == "donate":
                     data = self.prediction_donate(image_origin)
                     # print(data.json())
-                elif self.type_point == 'undonate':
+                elif self.type_point == "undonate":
                     data = self.prediction_login(image_origin)
                     # print(data.json())
-                if (data is not None):
-                    setup_motor = MotorPosition(
-                        class_name_prediction=data.json())
+                if data is not None:
+                    setup_motor = MotorPosition(class_name_prediction=data.json())
                     data_bin_details = setup_motor.setMoter()
 
                 os.remove(image_origin)
                 os.remove(image_grey)
 
-        return {'status': 200, "data": data.json(), 'bin_details': data_bin_details}
+        return {"status": 200, "data": data.json(), "bin_details": data_bin_details}

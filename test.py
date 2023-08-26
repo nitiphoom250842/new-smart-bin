@@ -42,8 +42,20 @@ context.set_tile_provider(staticmaps.tile_provider_StamenToner)
 center1 = staticmaps.create_latlng(66, 0)
 center2 = staticmaps.create_latlng(0, 0)
 
-context.add_object(staticmaps.Circle(center1, 2000, fill_color=staticmaps.TRANSPARENT, color=staticmaps.RED, width=2))
-context.add_object(staticmaps.Circle(center2, 2000, fill_color=staticmaps.TRANSPARENT, color=staticmaps.GREEN, width=2))
+context.add_object(
+    staticmaps.Circle(
+        center1, 2000, fill_color=staticmaps.TRANSPARENT, color=staticmaps.RED, width=2
+    )
+)
+context.add_object(
+    staticmaps.Circle(
+        center2,
+        2000,
+        fill_color=staticmaps.TRANSPARENT,
+        color=staticmaps.GREEN,
+        width=2,
+    )
+)
 context.add_object(staticmaps.Marker(center1, color=staticmaps.RED))
 context.add_object(staticmaps.Marker(center2, color=staticmaps.GREEN))
 

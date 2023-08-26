@@ -1,15 +1,16 @@
 import time
 from .ultrasonic import Ultrasonic
+import os
+
+if os.getenv("ENV") == "prod":
+    import RPi.GPIO as GPIO
+
 
 class Door:
-
     def __init__(self):
         pass
 
     def open(self):
-        import RPi.GPIO as GPIO
-        
-
         servoPOW = 6
         servoPIN = 26
         lightPIN = 13
@@ -25,11 +26,8 @@ class Door:
         p.ChangeDutyCycle(3.5)
         time.sleep(1)
         p.stop(self)
-    
-    def close():
-        import RPi.GPIO as GPIO
-        
 
+    def close():
         servoPOW = 6
         servoPIN = 26
         lightPIN = 13
@@ -45,7 +43,7 @@ class Door:
         time.sleep(1)
         p.stop()
         GPIO.output(servoPOW, False)
-    
+
     def setDoor(self):
         self.open()
         process_detect_trash = Ultrasonic()
@@ -56,5 +54,3 @@ class Door:
             return True
         else:
             return False
-        
-        

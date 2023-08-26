@@ -2,7 +2,6 @@
 class CheckBin:
     def __init__(self):
         pass
-        
-        
+
     def setMoter(self):
-        print("MotorPosition ",self)
+        print("MotorPosition ", self)

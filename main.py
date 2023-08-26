@@ -30,15 +30,15 @@ async def read_root(request: Request, response: Response):
     # print(request.query_params.get("open"))
     try:
 
-        if ('Bearer '+os.getenv('KEY_APP') == request.headers['authorization']):
+        if "Bearer " + os.getenv("KEY_APP") == request.headers["authorization"]:
             response.status_code = 200
-            return {"satus": 'good'}
+            return {"satus": "good"}
         else:
             response.status_code = 404
-            return {"satus": 'token not find or type token not find'}
+            return {"satus": "token not find or type token not find"}
     except:
         response.status_code = 404
-        return {"satus": 'token not find or type token not find'}
+        return {"satus": "token not find or type token not find"}
 
 
 @app.get("/items/{item_id}")
@@ -46,8 +46,7 @@ def read_item(item_id: int, q: Union[str, None] = None):
     return {"item_id": item_id, "q": q}
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run('main:app', host='0.0.0.0', port=8080,
-                reload=True, env_file='.env.dev')
+    uvicorn.run("main:app", host="0.0.0.0", port=8080, reload=True, env_file=".env.dev")
