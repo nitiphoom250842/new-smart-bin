@@ -111,6 +111,12 @@ class PredictionImage:
             # print(data.json())
 
         return data
+    
+    def removeImage(self, path: list):
+        for p in path:
+            try:  os.remove(p)
+            except: raise RemoveImageError()
+
 
     def predictions(self):
         # print("PredictionImage ",self.accessToken,self.type_point,self.status_test)
@@ -141,11 +147,7 @@ class PredictionImage:
                         setup_motor = MotorPosition(class_name_prediction=data.json())
                         data_bin_details = setup_motor.setMoter()
 
-                    try:
-                        os.remove(image_origin)
-                        os.remove(image_grey)
-                    except:
-                        raise RemoveImageError()
+                    self.removeImage([image_origin, image_grey])
 
                     return {
                         "status": 200,
@@ -167,7 +169,4 @@ class PredictionImage:
             
             except RemoveImageError:
                 raise RemoveImageError()
-            
-            except Exception:
-                raise Exception()
             

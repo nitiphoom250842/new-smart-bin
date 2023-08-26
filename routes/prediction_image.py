@@ -50,7 +50,6 @@ async def prediction(
     _: str = Depends(get_token),
 ):
     status_for_test = True
-    data = None
 
     try:
         if type_test == "yes":
