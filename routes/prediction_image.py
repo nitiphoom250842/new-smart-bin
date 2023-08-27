@@ -67,7 +67,7 @@ async def prediction(
         return setup.predictions()
     
     except DoorTimeout:
-        raise HTTPException(status_code=404, detail="door timeout")
+        raise HTTPException(status_code=502, detail="door timeout")
 
     except DoorError:
         raise HTTPException(status_code=503, detail="door error")

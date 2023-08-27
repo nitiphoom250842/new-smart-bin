@@ -2,7 +2,6 @@
 
 from mimetypes import guess_type
 import cv2
-from fastapi import HTTPException
 import requests
 import os
 import time
